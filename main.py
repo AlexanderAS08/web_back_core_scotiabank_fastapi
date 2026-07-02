@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import (
@@ -11,9 +12,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173")
+origins = [o.strip() for o in cors_origins.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React Vite frontend
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,6 +35,3 @@ app.include_router(rtr_recuperaciones.router, prefix="/recuperaciones", tags=["R
 @app.get("/")
 def root():
     return {"sistema": "Core Financiero Banco Andino", "version": "1.0.0", "status": "ok"}
-
-
-
